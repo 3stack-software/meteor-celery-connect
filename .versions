@@ -1,0 +1,8 @@
+3stack:celery@1.0.0
+3stack:celery-connect@1.0.0
+base64@1.0.2
+ejson@1.0.5
+json@1.0.2
+logging@1.0.6
+meteor@1.1.4
+underscore@1.0.2
