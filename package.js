@@ -1,6 +1,6 @@
 Package.describe({
   name: '3stack:celery-connect',
-  version: '1.0.0',
+  version: '1.1.0',
   summary: 'Simple interface to use 3stack:celery, just set environment variable CELERY_BROKER_URL',
   git: 'https://github.com/3stack-software/meteor-celery-connect',
   documentation: 'README.md'
