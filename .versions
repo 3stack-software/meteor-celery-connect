@@ -1,5 +1,5 @@
-3stack:celery@1.0.0
-3stack:celery-connect@1.1.0
+3stack:celery@2.0.0
+3stack:celery-connect@2.0.0
 base64@1.0.3
 ejson@1.0.6
 json@1.0.3

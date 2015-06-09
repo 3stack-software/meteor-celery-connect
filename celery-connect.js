@@ -3,24 +3,33 @@ if (process.env.CELERY_QUEUES != null){
   queueNames = process.env.CELERY_QUEUES.split(",")
 }
 
-if (process.env.CELERY_BROKER_URL != null) {
-  queueNames.forEach(function(queueName){
-    var Celery = new CeleryClient(queueName);
-    try {
-      Celery.connect({
-        "CELERY_BROKER_URL": process.env.CELERY_BROKER_URL,
-        "CELERY_RESULT_BACKEND": "amqp",
-        "CELERY_SEND_TASK_SENT_EVENT": true,
-        "DEFAULT_QUEUE": queueName,
-        "DEFAULT_EXCHANGE": queueName,
-        "DEFAULT_ROUTING_KEY": queueName
-      });
-    } catch (err) {
-      Log.error(err, err.stack);
-    }
+var routes = {};
+if (process.env.CELERY_ROUTES != null){
+  process.env.CELERY_ROUTES.trim(";").split(';').forEach(function(route){
+    if (route == '') return;
+    var parts = route.split('='),
+      queueName = parts[0],
+      methodNames = parts[1].split(',');
+    methodNames.forEach(function(methodName){
+      routes[methodName] = {
+        queue: queueName
+      };
+    });
   });
+}
+
+if (process.env.CELERY_BROKER_URL != null) {
+  Celery = new CeleryClient("celery-connect");
+
+  Celery.connect({
+    "BROKER_URL": process.env.CELERY_BROKER_URL,
+    "RESULT_BACKEND": "amqp",
+    "SEND_TASK_SENT_EVENT": true,
+    "QUEUES": queueNames,
+    "DEFAULT_QUEUE": queueNames[0],
+    "ROUTES": routes
+  });
+
 } else {
   Log.warn("Could not start celery- CELERY_BROKER_URL was not provided.");
 }
-
-Celery = CeleryClients[queueNames[0]];
