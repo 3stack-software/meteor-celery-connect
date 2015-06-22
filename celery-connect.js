@@ -19,15 +19,10 @@ if (process.env.CELERY_ROUTES != null){
 }
 
 if (process.env.CELERY_BROKER_URL != null) {
-  Celery = new CeleryClient("celery-connect");
-
-  Celery.connect({
-    "BROKER_URL": process.env.CELERY_BROKER_URL,
-    "RESULT_BACKEND": "amqp",
-    "SEND_TASK_SENT_EVENT": true,
-    "QUEUES": queueNames,
-    "DEFAULT_QUEUE": queueNames[0],
-    "ROUTES": routes
+  Celery = CeleryClient.connectWithUri(process.env.CELERY_BROKER_URL, {
+    defaultQueue: queueNames[0],
+    defaultRoutingKey: null,
+    routes: routes
   });
 
 } else {

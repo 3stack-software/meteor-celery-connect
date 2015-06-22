@@ -2,9 +2,22 @@
 
 Just set environment `CELERY_BROKER_URL` when starting Meteor, and then start calling the CeleryClient `Celery`
 
-See 3stack:celery  @ https://github.com/3stack-software/meteor-celery
+See 3stack:celery-shoot @ https://github.com/3stack-software/celery-shoot
 
 #Changes
+
+## 3.0.0
+
+ * Switched from `3stack:celery` to `3stack:celery-shoot` as core library. `celery-shoot` now has built-in support
+   for Meteor & `Fibers`, and uses the latest [node `amqp` library](https://github.com/dropbox/amqp-coffee)
+
+ * API has changed dramatically. Please see examples at [`celery-shoot`](https://github.com/3stack-software/celery-shoot)
+
+ * You no longer need to provide all queues to `CELERY_QUEUES` - however the first QUEUE will be used as default.
+
+ * `CELERY_BROKER_URL` must include every field (user/pass, host, port & vhost) `amqp://guest:guest@localhost:5672//`
+
+ * Due to internal library change - Disconnects/Reconnects are now handled much better!
 
 ## 2.0.0
 
