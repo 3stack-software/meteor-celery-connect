@@ -7,10 +7,10 @@ Package.describe({
 });
 
 Package.onUse(function(api){
-  api.versionsFrom('METEOR@1.1.0.2');
+  api.versionsFrom('METEOR@1.2.0.2');
 
   api.use('logging', 'server');
-  api.use('3stack:celery-shoot@4.0.3', 'server');
+  api.use('3stack:celery-shoot@4.1.0', 'server');
 
   api.export('Celery', 'server');
 

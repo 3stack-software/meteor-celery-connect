@@ -10,10 +10,12 @@ See 3stack:celery-shoot @ https://github.com/3stack-software/celery-shoot for mo
 
  * `CELERY_BROKER_URL` - Must use the full amqp address, eg. `amqp://guest:guest@localhost:5672//`.
     It must include username, password, host, and vhost.
- * `CELERY_QUEUES` - Set's the default queue for new tasks, defaults to `celery`
- * `CELERY_ROUTES` - Automatically send certain tasks to a different queue.
-    Formatted `queue_1=task_1,task_2;queue_2=task_3,task_4;`.
-    You can manually override routes on `createTask`, like so: `var task = Celery.createTask('task_1',{},{queueName:'queue_x'})`
+ * `CELERY_DEFAULT_EXCHANGE` - Set's the default exchange for new tasks, defaults to `celery`.
+ * `CELERY_DEFAULT_ROUTING_KEY` - Set's the default routing key for new tasks, defaults to `celery`.
+ * `CELERY_ROUTES` - Automatically send certain tasks to a different exchanges & routes.
+    Formatted `exchange_1|routing_key_1=task_1,task_2;exchange_1|routing_key_2=task_3,task_4;exchange_2|routing_keyX=task_5`.
+    Or, You can manually override routes on `createTask`, like so:
+    `var task = Celery.createTask('task_1',{},{exchangeName:'exchange_x', routingKey: 'abc1234'})`
 
 ## Usage
 
@@ -89,6 +91,13 @@ CELERY_ACCEPT_CONTENT = ['json']
 ```
 
 #Changes
+
+## 3.1.0
+
+ * Fixed nomenclature - Messages are sent to `exchanges`, addressed with a `routing-key`; RabbitMQ will
+   then direct them to `queues` based on bindings. Celery will consume tasks from the `queue`.
+   As such `CELERY_QUEUES` is no longer available. Use `CELERY_DEFAULT_EXCHANGE` and
+   `CELERY_DEFAULT_ROUTING_KEY` instead.
 
 ## 3.0.0
 

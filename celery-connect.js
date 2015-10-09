@@ -1,27 +1,48 @@
-var queueNames = ["celery"];
 if (process.env.CELERY_QUEUES != null){
-  queueNames = process.env.CELERY_QUEUES.split(",")
+  Log.warn('CELERY_QUEUES is no longer supported. Use CELERY_DEFAULT_EXCHANGE & CELERY_DEFAULT_ROUTING_KEY instead.');
+}
+
+var defaultExchange = "celery";
+if (process.env.CELERY_DEFAULT_EXCHANGE != null){
+  defaultExchange = process.env.CELERY_DEFAULT_EXCHANGE;
+}
+
+var defaultRoutingKey = "celery";
+if (process.env.CELERY_DEFAULT_ROUTING_KEY != null){
+  defaultRoutingKey = process.env.CELERY_DEFAULT_ROUTING_KEY;
 }
 
 var routes = {};
 if (process.env.CELERY_ROUTES != null){
-  process.env.CELERY_ROUTES.trim(";").split(';').forEach(function(route){
-    if (route == '') return;
-    var parts = route.split('='),
-      queueName = parts[0],
-      methodNames = parts[1].split(',');
-    methodNames.forEach(function(methodName){
-      routes[methodName] = {
-        queue: queueName
+  process.env.CELERY_ROUTES.trim(";").split(';').forEach(function(routeRepr){
+    if (routeRepr == '') return;
+    var parts = routeRepr.split('='),
+      exchangeAndRoutingKey = parts[0],
+      methodNames = parts[1].split(','),
+      destinationParts, route;
+
+    if (exchangeAndRoutingKey.indexOf('|') === -1){
+      route = {
+        exchange: exchangeAndRoutingKey
       };
+    } else {
+      destinationParts = exchangeAndRoutingKey.split('|');
+      route = {
+        exchange: destinationParts[0],
+        routingKey: destinationParts[1]
+      }
+    }
+
+    methodNames.forEach(function(methodName){
+      routes[methodName] = route;
     });
   });
 }
 
 if (process.env.CELERY_BROKER_URL != null) {
   Celery = CeleryClient.connectWithUri(process.env.CELERY_BROKER_URL, {
-    defaultQueue: queueNames[0],
-    defaultRoutingKey: null,
+    defaultExchange: defaultExchange,
+    defaultRoutingKey: defaultRoutingKey,
     routes: routes
   });
 
